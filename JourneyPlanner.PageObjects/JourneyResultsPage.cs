@@ -11,7 +11,8 @@ namespace JourneyPlanner.PageObjects
         private IWebElement FromElement => Driver.FindElement(By.Id("InputFrom"));
         private By journeyResultsHeaderBy = By.XPath("//h1/span[text()=\"Journey results\"]");
         private IWebElement EditJourneyLink => Driver.FindElement(By.XPath("//*[contains(@class, 'edit-journey')]"));
-        private IWebElement UpdateJourneyButton => Driver.FindElement(By.XPath("//*[@id='plan-journey-button']"));
+        //private IWebElement UpdateJourneyButton => Driver.FindElement(By.XPath("//*[@id='plan-journey-button']"));
+        private IWebElement UpdateJourneyButton => Driver.FindElement(By.Id("plan-journey-button"));
 
         public JourneyResultsPage(IWebDriver driver, IWait<IWebDriver> wait)
         {
