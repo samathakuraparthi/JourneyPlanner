@@ -48,5 +48,17 @@ namespace JourneyPlanner.PageObjects
         {
             PlanJourneyButton.Click();
         }
+
+        public string GetErrorMessage(string fieldName)
+        {
+            string locatorId = "InputFrom-error";
+
+            if (fieldName.ToLower() == "to")
+            {
+                locatorId = "InputTo-error";
+            }
+
+            return Driver.FindElement(By.Id(locatorId)).Text;
+        }
     }
 }

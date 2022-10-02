@@ -23,7 +23,15 @@ namespace JourneyPlanner.StepDefinitions
         public void BeforeScenario()
         {
             var browserType = TestContext.Parameters["BrowserType"];
-            var headLess = Convert.ToBoolean(TestContext.Parameters["Headless"]);
+
+            // If no config found set default values
+            if (browserType == null)
+                browserType = "chrome";
+
+            var headLessSetting = TestContext.Parameters["Headless"];
+            var headLess = false;
+            if (headLessSetting != null)
+                headLess = Convert.ToBoolean(headLessSetting);
 
             if (browserType.ToLower() == "chrome")
             {
@@ -61,14 +69,15 @@ namespace JourneyPlanner.StepDefinitions
             var doneElementBy = By.XPath("//div[@id='cb-confirmedSettings']/div/button");
             webDriverWait.Until(_ => driver.FindElement(doneElementBy).Displayed);
             driver.FindElement(doneElementBy).Click();
+
+            homePage = new HomePage(driver, webDriverWait);
+            homePage.WaitForPageLoad();
         }
 
         [When(@"user enter plan journey as follows")]
         public void WhenUserEnterPlanJourneyAsFollows(Table Table)
         {
             var searchTable = Table.CreateInstance<SearchCriteriaTable>();
-            homePage = new HomePage(driver, webDriverWait);
-            homePage.WaitForPageLoad();
             homePage.EnterFromAndToPlaces(searchTable.From, searchTable.To);
         }
 
@@ -116,10 +125,11 @@ namespace JourneyPlanner.StepDefinitions
             actulErrorMessage.Should().Be(expectedErrorMessage);
         }
 
-        [Then(@"the following warning message is displayed")]
-        public void ThenTheFollowingWarningMessageIsDisplayed(Table table)
+        [Then(@"validation message '([^']*)' displayed for the input field '([^']*)'")]
+        public void ThenValidationMessageDisplayedForTheInputField(string expectedWarningMessage, string fieldName)
         {
-            throw new PendingStepException();
+            var actualErrorMessage = homePage.GetErrorMessage(fieldName);
+            actualErrorMessage.Should().Be(expectedWarningMessage);
         }
 
         [When(@"user click the '([^']*)' link")]

@@ -33,9 +33,8 @@ Examples:
 Scenario: 3.Verify that the widget is unable to plan a journey if no locations are entered into the widget
 	Given user open tfl journey planner
 	When Click on Plan my journey
-	Then the following warning message is displayed
-		| The From field is required. |
-		| The To field is required.   |
+	Then validation message 'The From field is required.' displayed for the input field 'From'
+	And validation message 'The To field is required.' displayed for the input field 'To'
 
 Scenario: 4.Verify that a journey can be amended by using the “Edit Journey” button on the journey results page
 	Given user open tfl journey planner
