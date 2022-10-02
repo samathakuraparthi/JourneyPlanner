@@ -8,69 +8,36 @@ using JourneyPlanner.Model;
 using TechTalk.SpecFlow.Assist;
 using NUnit.Framework;
 using Microsoft.Extensions.Configuration;
+using FluentAssertions;
 
 namespace JourneyPlanner.StepDefinitions
 {
     [Binding]
-    public class PlanAJourneyStepDefinitions
+    public class JourneyPlannerHomeSteps
     {
-        WebDriver driver;
-        IWait<IWebDriver> webDriverWait;
         HomePage homePage;
         JourneyResultsPage resultPage;
 
-        [BeforeScenario]
-        public void BeforeScenario()
+        public Context Context { get; }
+
+        public JourneyPlannerHomeSteps(Context context)
         {
-            var browserType = TestContext.Parameters["BrowserType"];
-
-            // If no config found set default values
-            if (browserType == null)
-                browserType = "chrome";
-
-            var headLessSetting = TestContext.Parameters["Headless"];
-            var headLess = false;
-            if (headLessSetting != null)
-                headLess = Convert.ToBoolean(headLessSetting);
-
-            if (browserType.ToLower() == "chrome")
-            {
-                ChromeOptions options = new ChromeOptions();
-                options.AddArguments("start-maximized");
-                options.AddArguments("--incognito");
-                if (headLess)
-                    options.AddArgument("--headless");
-
-                driver = new ChromeDriver(options);
-            }
-            else
-            {
-                driver = new FirefoxDriver();
-            }
-
-            webDriverWait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
-            webDriverWait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-        }
-
-        [AfterScenario]
-        public void AfterScenario()
-        {
-            driver.Close();
+            Context = context;
         }
 
         [Given(@"user open tfl journey planner")]
         public void GivenUserOpenTflJourneyPlanner()
         {
-            driver.Url = "https://tfl.gov.uk/";
+            Context.Driver.Url = "https://tfl.gov.uk/";
             var acceptCookiesElementBy = By.Id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll");
-            webDriverWait.Until(_ => driver.FindElement(acceptCookiesElementBy).Displayed);
-            driver.FindElement(acceptCookiesElementBy).Click();
+            Context.WebDriverWait.Until(_ => Context.Driver.FindElement(acceptCookiesElementBy).Displayed);
+            Context.Driver.FindElement(acceptCookiesElementBy).Click();
 
             var doneElementBy = By.XPath("//div[@id='cb-confirmedSettings']/div/button");
-            webDriverWait.Until(_ => driver.FindElement(doneElementBy).Displayed);
-            driver.FindElement(doneElementBy).Click();
+            Context.WebDriverWait.Until(_ => Context.Driver.FindElement(doneElementBy).Displayed);
+            Context.Driver.FindElement(doneElementBy).Click();
 
-            homePage = new HomePage(driver, webDriverWait);
+            homePage = new HomePage(Context.Driver, Context.WebDriverWait);
             homePage.WaitForPageLoad();
         }
 
@@ -86,7 +53,7 @@ namespace JourneyPlanner.StepDefinitions
         public void WhenUserEnterPlanJourneyAsFollowsWithInvalidLocations(Table Table)
         {
             var searchTable = Table.CreateInstance<SearchCriteriaTable>();
-            homePage = new HomePage(driver, webDriverWait);
+            homePage = new HomePage(Context.Driver, Context.WebDriverWait);
             homePage.WaitForPageLoad();
             homePage.EnterFromAndToPlaces(searchTable.From, searchTable.To, false);
         }
@@ -100,7 +67,7 @@ namespace JourneyPlanner.StepDefinitions
         [Then(@"Journey results page is displayed")]
         public void ThenJourneyResultsPageIsDisplayed()
         {
-            resultPage = new JourneyResultsPage(driver, webDriverWait);
+            resultPage = new JourneyResultsPage(Context.Driver, Context.WebDriverWait);
             resultPage.WaitForPageLoad();
             resultPage.IsJourneyResultsHeaderDisplayed().Should().BeTrue();
         }
@@ -109,8 +76,8 @@ namespace JourneyPlanner.StepDefinitions
         public void ThenFastestByPublicTransportResultShouldContainTheFollowingRoute(Table table)
         {
             var topResultsBy = By.Id("option-1-content");
-            webDriverWait.Until(d => d.FindElement(topResultsBy).Displayed);
-            var topResult = driver.FindElement(topResultsBy).Text;
+            Context.WebDriverWait.Until(d => d.FindElement(topResultsBy).Displayed);
+            var topResult = Context.Driver.FindElement(topResultsBy).Text;
 
             foreach (var row in table.Rows)
             {
@@ -132,40 +99,41 @@ namespace JourneyPlanner.StepDefinitions
             actualErrorMessage.Should().Be(expectedWarningMessage);
         }
 
-        [When(@"user click the '([^']*)' link")]
-        public void WhenUserClickTheLink(string p0)
+        [When(@"user click the Edit journey link")]
+        public void WhenUserClickTheLink()
         {
-            throw new PendingStepException();
+            resultPage.ClickEditJourneyLink();
         }
 
         [When(@"Click on Update journey")]
         public void WhenClickOnUpdateJourney()
         {
-            throw new PendingStepException();
+            resultPage.UpdateJourneyResults();
         }
 
-        [When(@"user clicks on '([^']*)' breadcrumb")]
-        public void WhenUserClicksOnBreadcrumb(string p0)
+        [When(@"user clicks on Home link")]
+        public void WhenUserClicksOnHomeLink()
         {
-            throw new PendingStepException();
+            resultPage.NavigateToHome();
         }
 
         [Then(@"homepage is displayed")]
         public void ThenHomepageIsDisplayed()
         {
-            throw new PendingStepException();
+            homePage.WaitForPageLoad();
         }
 
-        [When(@"user clicks on '([^']*)' tab")]
-        public void WhenUserClicksOnTab(string recents)
+        [When(@"user clicks on Recents tab")]
+        public void WhenUserClicksOnTab()
         {
-            throw new PendingStepException();
+            homePage.ClickRecentsTab();
         }
 
         [Then(@"the recent journey '([^']*)' is displayed")]
-        public void ThenTheRecentJourneyIsDisplayed(string p0)
+        public void ThenTheRecentJourneyIsDisplayed(string expectedRecentSearch)
         {
-            throw new PendingStepException();
+            var actualRecentJourneyText = homePage.GetRecentSearch();
+            actualRecentJourneyText.Should().Be(expectedRecentSearch);
         }
 
 

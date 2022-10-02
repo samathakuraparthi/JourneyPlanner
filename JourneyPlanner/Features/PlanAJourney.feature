@@ -36,35 +36,37 @@ Scenario: 3.Verify that the widget is unable to plan a journey if no locations a
 	Then validation message 'The From field is required.' displayed for the input field 'From'
 	And validation message 'The To field is required.' displayed for the input field 'To'
 
-Scenario: 4.Verify that a journey can be amended by using the “Edit Journey” button on the journey results page
+Scenario: 4.Verify that a journey can be amended by using the "Edit Journey" button on the journey results page
 	Given user open tfl journey planner
 	When user enter plan journey as follows
 		| From                           | To                                 |
 		| Green Park Underground Station | Canary Wharf, Canary Wharf Station |
 	And Click on Plan my journey
 	Then Journey results page is displayed
-	When user click the 'Edit journey' link
+	When user click the Edit journey link
 	And user enter plan journey as follows
 		| From                          | To                           |
 		| Stratford Underground Station | Stanmore Underground Station |
 	And Click on Update journey
 	Then Fastest by public transport result should contain the following route
-		| Route                        |
-		| Transfer to Stanmore Station |
-		| Stratford Station            |
+		| Route                         |
+		| Transfer to Stratford Station |
+		| Stanmore Station              |
 
-Scenario: 5.Verify that the “Recents” tab on the widget displays a list of recently planned journeys
+Scenario: 5.Verify that the "Recents" tab on the widget displays a list of recently planned journeys
 	Given user open tfl journey planner
 	When user enter plan journey as follows
 		| From                          | To                           |
 		| Stratford Underground Station | Stanmore Underground Station |
 	And Click on Plan my journey
 	Then Journey results page is displayed
-	And Fastest by public transport result should contain the following route
-		| Route                        |
-		| Transfer to Stanmore Station |
-		| Stratford Station            |
-	When user clicks on 'Plan a journey' breadcrumb
+	When user clicks on Home link
+	When user enter plan journey as follows
+		| From                          | To                           |
+		| Stratford Underground Station | Stanmore Underground Station |
+	And Click on Plan my journey
+	Then Journey results page is displayed
+	When user clicks on Home link
 	Then homepage is displayed
-	When user clicks on 'Recents' tab
+	When user clicks on Recents tab
 	Then the recent journey 'Stratford Underground Station to Stanmore Underground Station' is displayed

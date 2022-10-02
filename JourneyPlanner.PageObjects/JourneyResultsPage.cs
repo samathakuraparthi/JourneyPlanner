@@ -10,6 +10,8 @@ namespace JourneyPlanner.PageObjects
 
         private IWebElement FromElement => Driver.FindElement(By.Id("InputFrom"));
         private By journeyResultsHeaderBy = By.XPath("//h1/span[text()=\"Journey results\"]");
+        private IWebElement EditJourneyLink => Driver.FindElement(By.XPath("//*[contains(@class, 'edit-journey')]"));
+        private IWebElement UpdateJourneyButton => Driver.FindElement(By.XPath("//*[@id='plan-journey-button']"));
 
         public JourneyResultsPage(IWebDriver driver, IWait<IWebDriver> wait)
         {
@@ -35,6 +37,26 @@ namespace JourneyPlanner.PageObjects
             var errorMessageBy = By.XPath("//li[@class='field-validation-error']");
             Wait.Until(d => d.FindElement(errorMessageBy).Displayed);
             return Driver.FindElement(errorMessageBy).Text;
+        }
+
+        public void ClickEditJourneyLink()
+        {
+            EditJourneyLink.Click();
+        }
+
+        public void UpdateJourneyResults()
+        {
+            UpdateJourneyButton.Click();
+        }
+
+        public void ClickPlanAJourneyLink()
+        {
+            Driver.FindElement(By.LinkText("Plan a journey")).Click();
+        }
+
+        public void NavigateToHome()
+        {
+            Driver.FindElement(By.XPath("//span[contains(text(),'Home')]")).Click();
         }
     }
 }

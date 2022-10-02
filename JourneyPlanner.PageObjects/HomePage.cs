@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Diagnostics;
 
 namespace JourneyPlanner.PageObjects
 {
@@ -15,6 +16,7 @@ namespace JourneyPlanner.PageObjects
         private IWebElement ToSuggestionDropDownList => Driver.FindElement(By.XPath("//*[input[@id='InputTo']]/*[contains(@class, 'tt-dropdown-menu')]"));
 
         private IWebElement PlanJourneyButton => Driver.FindElement(By.Id("plan-journey-button"));
+        private IWebElement RecentTab => Driver.FindElement(By.LinkText("Recents"));
 
         public HomePage(IWebDriver driver, IWait<IWebDriver> wait)
         {
@@ -25,6 +27,7 @@ namespace JourneyPlanner.PageObjects
         public void WaitForPageLoad()
         {
             Wait.Until(driver => FromElement.Displayed);
+            Wait.Until(driver => RecentTab.Displayed);
         }
 
         public void EnterFromAndToPlaces(string from, string to, bool selectFromSuggestion = true)
@@ -35,7 +38,10 @@ namespace JourneyPlanner.PageObjects
 
         public void EnterAndSelectFromSuggestionList(IWebElement element, string input, IWebElement suggestionElement, bool selectFromSuggestion)
         {
+            element.SendKeys(Keys.Control + "a");
+            element.SendKeys(Keys.Backspace);
             element.SendKeys(input);
+
             if (selectFromSuggestion)
             {
                 Wait.Until(driver => suggestionElement.Displayed);
@@ -59,6 +65,18 @@ namespace JourneyPlanner.PageObjects
             }
 
             return Driver.FindElement(By.Id(locatorId)).Text;
+        }
+
+        public void ClickRecentsTab()
+        {
+            RecentTab.Click();
+        }
+
+        public string GetRecentSearch()
+        {
+            var recentTabBy = By.XPath("//*[contains(@class,'plain-button journey-item')]");
+            Wait.Until(d => d.FindElement(recentTabBy).Displayed);
+            return Driver.FindElement(recentTabBy).Text;
         }
     }
 }
