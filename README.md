@@ -13,7 +13,8 @@
 
 - Build the solution
 - run all tests from test explorer
-<img width="674" alt="image" src="https://user-images.githubusercontent.com/87817875/193453797-ebbe15e8-bbd6-484c-a9c5-64e1f0534324.png">
+<img width="427" alt="image" src="https://user-images.githubusercontent.com/87817875/193454071-365c91df-e944-4c2c-97ca-82d65316787e.png">
+
 
 ## Known issues
  - Test may fail if the journy planner returns differnt results for the given search criteria. That is an expected behviour since we are testing a live system 
