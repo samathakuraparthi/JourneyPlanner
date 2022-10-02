@@ -1,0 +1,1 @@
+﻿<?xml version="1.0" encoding="utf-8" ?><RunSettings>	<TestRunParameters>		<Parameter name="BrowserType" value="chrome" />		<Parameter name="Headless" value="true" />	</TestRunParameters></RunSettings>
