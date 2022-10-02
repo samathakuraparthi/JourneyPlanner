@@ -1,5 +1,11 @@
 # JourneyPlanner
 
+## Tools used for Automation
+- Selenium
+- Specflow
+- C#
+- nunit
+
 ## Prerequisite
 - Visual Studio 2022 
 - .net 6.0 version
