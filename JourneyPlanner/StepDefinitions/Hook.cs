@@ -46,14 +46,19 @@ namespace JourneyPlanner.StepDefinitions
 
                 Context.Driver = new ChromeDriver(options);
             }
-            else
+            else if (browserType.ToLower() == "firefox")
             {
                 Context.Driver = new FirefoxDriver();
+            }
+            else
+            {
+                throw new NotImplementedException($"{browserType} is not supported");
             }
 
             Context.WebDriverWait = new WebDriverWait(Context.Driver, TimeSpan.FromSeconds(30));
             Context.WebDriverWait.IgnoreExceptionTypes(typeof(NoSuchElementException));
             Context.WebDriverWait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
+            Context.WebDriverWait.IgnoreExceptionTypes(typeof(ElementNotInteractableException));
         }
 
         [AfterScenario]

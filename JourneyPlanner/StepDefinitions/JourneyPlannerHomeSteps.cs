@@ -29,15 +29,8 @@ namespace JourneyPlanner.StepDefinitions
         public void GivenUserOpenTflJourneyPlanner()
         {
             Context.Driver.Url = "https://tfl.gov.uk/";
-            var acceptCookiesElementBy = By.Id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll");
-            Context.WebDriverWait.Until(_ => Context.Driver.FindElement(acceptCookiesElementBy).Displayed);
-            Context.Driver.FindElement(acceptCookiesElementBy).Click();
-
-            var doneElementBy = By.XPath("//div[@id='cb-confirmedSettings']/div/button");
-            Context.WebDriverWait.Until(_ => Context.Driver.FindElement(doneElementBy).Displayed);
-            Context.Driver.FindElement(doneElementBy).Click();
-
             homePage = new HomePage(Context.Driver, Context.WebDriverWait);
+            homePage.AcceptCookies();
             homePage.WaitForPageLoad();
         }
 

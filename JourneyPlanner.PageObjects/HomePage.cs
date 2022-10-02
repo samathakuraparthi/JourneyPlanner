@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System.Diagnostics;
+using System.Xml.Serialization;
 
 namespace JourneyPlanner.PageObjects
 {
@@ -8,7 +9,8 @@ namespace JourneyPlanner.PageObjects
     {
         public IWebDriver Driver { get; }
         public IWait<IWebDriver> Wait { get; }
-
+        private IWebElement AcceptAllCookiesElement => Driver.FindElement(By.Id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"));
+        private IWebElement DoneElement => Driver.FindElement(By.XPath("//div[@id='cb-confirmedSettings']/div/button"));
         private IWebElement FromElement => Driver.FindElement(By.Id("InputFrom"));
         private IWebElement ToElement => Driver.FindElement(By.Id("InputTo"));
 
@@ -30,6 +32,15 @@ namespace JourneyPlanner.PageObjects
             Wait.Until(driver => RecentTab.Displayed);
         }
 
+        public void AcceptCookies()
+        {
+            Wait.Until(_ => AcceptAllCookiesElement.Displayed);
+            AcceptAllCookiesElement.Click();
+
+            Wait.Until(_ => DoneElement.Displayed);
+            DoneElement.Click();
+        }
+
         public void EnterFromAndToPlaces(string from, string to, bool selectFromSuggestion = true)
         {
             EnterAndSelectFromSuggestionList(FromElement, from, FromSuggestionDropDownList, selectFromSuggestion);
@@ -38,10 +49,10 @@ namespace JourneyPlanner.PageObjects
 
         public void EnterAndSelectFromSuggestionList(IWebElement element, string input, IWebElement suggestionElement, bool selectFromSuggestion)
         {
+            Wait.Until(d => element.Displayed);
             element.SendKeys(Keys.Control + "a");
             element.SendKeys(Keys.Backspace);
             element.SendKeys(input);
-
             if (selectFromSuggestion)
             {
                 Wait.Until(driver => suggestionElement.Displayed);
